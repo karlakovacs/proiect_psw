@@ -17,3 +17,10 @@
 ```bash
 pip install -r requirements.txt
 ```
+## Rularea programului
+
+- Puteți lansa aplicația folosind comanda:
+
+```bash
+streamlit run app.py
+```
