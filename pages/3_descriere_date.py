@@ -5,9 +5,9 @@ Descriere detaliată a coloanelor din setul de date.
 - Afișează o descriere predefinită pentru fiecare coloană (dacă există).
 - Detectează automat tipul variabilei: numerică, booleană sau categorială.
 - Afișează statistici specifice în funcție de tipul detectat:
-    - Booleane: număr și procent de valori `True`
-    - Numerice: min, max, medie, mediană, deviație standard, quartile
-    - Categoriale: număr de valori unice, cele mai frecvente valori
+	- Booleane: număr și procent de valori `True`
+	- Numerice: min, max, medie, mediană, deviație standard, quartile
+	- Categoriale: număr de valori unice, cele mai frecvente valori
 - Suportă afișare stilizată pentru o experiență intuitivă în Streamlit.
 """
 
@@ -30,16 +30,16 @@ def get_tip_variabila(col):
 	Parametri:
 	----------
 	col : pd.Series
-	    Coloana a cărei tip logic se dorește determinat.
+		Coloana a cărei tip logic se dorește determinat.
 
 	Returnează:
 	-----------
 	str
-	    Tipul variabilei, ca șir de caractere:
-	    - "booleană" pentru coloane de tip bool
-	    - "numerică" pentru coloane numerice (int, float)
-	    - "categorială" pentru tipuri obiect sau categorice
-	    - "-" dacă tipul nu se încadrează în cele de mai sus
+		Tipul variabilei, ca șir de caractere:
+		- "booleană" pentru coloane de tip bool
+		- "numerică" pentru coloane numerice (int, float)
+		- "categorială" pentru tipuri obiect sau categorice
+		- "-" dacă tipul nu se încadrează în cele de mai sus
 	"""
 	match True:
 		case _ if pd.api.types.is_bool_dtype(col):

@@ -29,16 +29,16 @@ def introducere_valori_lipsa(df: pd.DataFrame, procent_min=0.01, procent_max=0.1
 	Parametri:
 	----------
 	df : pd.DataFrame
-	    DataFrame-ul original.
+		DataFrame-ul original.
 	procent_min : float, implicit 0.01
-	    Procentul minim de valori lipsă ce vor fi introduse per coloană.
+		Procentul minim de valori lipsă ce vor fi introduse per coloană.
 	procent_max : float, implicit 0.1
-	    Procentul maxim de valori lipsă ce pot fi introduse per coloană.
+		Procentul maxim de valori lipsă ce pot fi introduse per coloană.
 
 	Returnează:
 	-----------
 	pd.DataFrame
-	    O copie a DataFrame-ului original cu valori lipsă introduse aleatoriu (exceptând coloana 'Target').
+		O copie a DataFrame-ului original cu valori lipsă introduse aleatoriu (exceptând coloana 'Target').
 	"""
 	df_copy = df.copy()
 	for col in df_copy.columns:
@@ -57,7 +57,7 @@ def plot_valori_lipsa(df: pd.DataFrame):
 	Parametri:
 	----------
 	df : pd.DataFrame
-	    DataFrame-ul analizat pentru identificarea valorilor lipsă.
+		DataFrame-ul analizat pentru identificarea valorilor lipsă.
 
 	Ce face funcția:
 	----------------

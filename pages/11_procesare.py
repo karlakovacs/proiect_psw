@@ -33,19 +33,19 @@ def tratare_outlieri_df(df: pd.DataFrame, strategie: str) -> pd.DataFrame:
 	Parametri:
 	----------
 	df : pd.DataFrame
-	    Setul de date original.
+		Setul de date original.
 	strategie : str
-	    Strategia aleasă pentru tratarea outlierilor. Opțiuni posibile:
-	    - "Eliminare rânduri cu outlieri"
-	    - "Înlocuire cu NaN"
-	    - "Transformare logaritmică"
-	    - "Capping (1%-99%)"
-	    - "Păstrare" (nu aplică nicio modificare)
+		Strategia aleasă pentru tratarea outlierilor. Opțiuni posibile:
+		- "Eliminare rânduri cu outlieri"
+		- "Înlocuire cu NaN"
+		- "Transformare logaritmică"
+		- "Capping (1%-99%)"
+		- "Păstrare" (nu aplică nicio modificare)
 
 	Returnează:
 	-----------
 	pd.DataFrame
-	    DataFrame-ul modificat conform strategiei selectate, fără a altera coloana 'Target'.
+		DataFrame-ul modificat conform strategiei selectate, fără a altera coloana 'Target'.
 	"""
 	df = df.copy()
 	for col in df.select_dtypes(include=["float64", "int64"]).columns:
@@ -79,12 +79,12 @@ def tratare_valori_lipsa_df(df: pd.DataFrame, strategie: str) -> pd.DataFrame:
 	Parametri:
 	----------
 	df : pd.DataFrame
-	    DataFrame-ul original cu posibile valori lipsă.
+		DataFrame-ul original cu posibile valori lipsă.
 	strategie : str
-	    Metoda de completare pentru coloanele numerice:
-	    - "Medie": înlocuiește valorile lipsă cu media coloanei.
-	    - "Mediană": înlocuiește valorile lipsă cu mediana coloanei.
-	    - "Mod": înlocuiește valorile lipsă cu valoarea modală (cea mai frecventă).
+		Metoda de completare pentru coloanele numerice:
+		- "Medie": înlocuiește valorile lipsă cu media coloanei.
+		- "Mediană": înlocuiește valorile lipsă cu mediana coloanei.
+		- "Mod": înlocuiește valorile lipsă cu valoarea modală (cea mai frecventă).
 
 	Ce face în plus:
 	----------------
@@ -94,7 +94,7 @@ def tratare_valori_lipsa_df(df: pd.DataFrame, strategie: str) -> pd.DataFrame:
 	Returnează:
 	-----------
 	pd.DataFrame
-	    O copie a DataFrame-ului original, cu valorile lipsă completate.
+		O copie a DataFrame-ului original, cu valorile lipsă completate.
 	"""
 	df = df.copy()
 	for col in df.select_dtypes(include=np.number).columns:
@@ -120,18 +120,18 @@ def tratare_codificari_df(
 	Parametri:
 	----------
 	df : pd.DataFrame
-	    Setul de date original.
+		Setul de date original.
 	use_one_hot : bool
-	    Dacă este True, se aplică One Hot Encoding pentru variabilele categoriale care nu au fost deja codificate cu Label Encoding.
+		Dacă este True, se aplică One Hot Encoding pentru variabilele categoriale care nu au fost deja codificate cu Label Encoding.
 	label_encoding : dict
-	    Dicționar cu perechi {coloană: ordine_valori} ce specifică ordinea dorită pentru codificarea label.
+		Dicționar cu perechi {coloană: ordine_valori} ce specifică ordinea dorită pentru codificarea label.
 	max_categorii : int, optional
-	    Număr maxim de categorii permis pentru aplicarea One Hot Encoding. Coloanele cu un număr mai mare de categorii vor fi ignorate.
+		Număr maxim de categorii permis pentru aplicarea One Hot Encoding. Coloanele cu un număr mai mare de categorii vor fi ignorate.
 
 	Returnează:
 	-----------
 	pd.DataFrame
-	    DataFrame-ul rezultat după aplicarea codificărilor. Coloana 'Target' este exclusă din orice codificare.
+		DataFrame-ul rezultat după aplicarea codificărilor. Coloana 'Target' este exclusă din orice codificare.
 	"""
 	df_transformed = df.copy()
 
@@ -165,18 +165,18 @@ def scalare_date(X: pd.DataFrame, metoda_scalare: str) -> pd.DataFrame:
 	Parametri:
 	----------
 	X : pd.DataFrame
-	    DataFrame-ul de intrare, conținând caracteristicile de scalat.
+		DataFrame-ul de intrare, conținând caracteristicile de scalat.
 	metoda_scalare : str
-	    Metoda de scalare aleasă. Opțiuni posibile:
-	    - "StandardScaler": scalare standard (medie 0, deviație standard 1)
-	    - "MinMaxScaler": scalare între 0 și 1
-	    - "RobustScaler": scalare robustă față de outlieri (mediana și IQR)
-	    - "Niciuna": nu se aplică nicio scalare
+		Metoda de scalare aleasă. Opțiuni posibile:
+		- "StandardScaler": scalare standard (medie 0, deviație standard 1)
+		- "MinMaxScaler": scalare între 0 și 1
+		- "RobustScaler": scalare robustă față de outlieri (mediana și IQR)
+		- "Niciuna": nu se aplică nicio scalare
 
 	Returnează:
 	-----------
 	pd.DataFrame
-	    DataFrame-ul cu coloanele numerice scalate, restul coloanelor rămân neschimbate.
+		DataFrame-ul cu coloanele numerice scalate, restul coloanelor rămân neschimbate.
 	"""
 	if metoda_scalare == "Niciuna":
 		return X
@@ -211,16 +211,16 @@ def pregatire_date(df: pd.DataFrame, config: dict):
 	Parametri:
 	----------
 	df : pd.DataFrame
-	    DataFrame-ul original ce conține și coloana 'Target'.
+		DataFrame-ul original ce conține și coloana 'Target'.
 	config : dict
-	    Dicționar cu setările de preprocesare (strategii, codificare, scalare, split etc.).
+		Dicționar cu setările de preprocesare (strategii, codificare, scalare, split etc.).
 
 	Returnează:
 	-----------
 	tuple:
-	    - df_final: pd.DataFrame — datele de antrenare cu 'Target' inclus.
-	    - X_train, X_test: pd.DataFrame — caracteristicile separate pentru antrenare și testare.
-	    - y_train, y_test: pd.Series — valorile țintă corespunzătoare.
+		- df_final: pd.DataFrame — datele de antrenare cu 'Target' inclus.
+		- X_train, X_test: pd.DataFrame — caracteristicile separate pentru antrenare și testare.
+		- y_train, y_test: pd.Series — valorile țintă corespunzătoare.
 	"""
 	df = tratare_outlieri_df(df, config["tratare_outlieri"])
 	df = tratare_valori_lipsa_df(df, config["tratare_valori_lipsa"])

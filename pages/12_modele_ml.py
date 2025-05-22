@@ -46,13 +46,13 @@ def antrenare_model(denumire_model: str, model, X_train, X_test, y_train, y_test
 	Parametri:
 	----------
 	denumire_model : str
-	    Numele modelului (util pentru afișare și tratamente speciale, ex. CatBoost).
+		Numele modelului (util pentru afișare și tratamente speciale, ex. CatBoost).
 	model : object
-	    Instanța modelului ML (ex. CatBoostClassifier, XGBClassifier, etc.).
+		Instanța modelului ML (ex. CatBoostClassifier, XGBClassifier, etc.).
 	X_train, X_test : pd.DataFrame
-	    Seturile de antrenare și testare pentru caracteristici.
+		Seturile de antrenare și testare pentru caracteristici.
 	y_train, y_test : pd.Series
-	    Etichetele corespunzătoare seturilor de antrenare și testare.
+		Etichetele corespunzătoare seturilor de antrenare și testare.
 
 	Ce face funcția:
 	----------------

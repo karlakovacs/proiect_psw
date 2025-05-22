@@ -27,14 +27,14 @@ def codificare_coloane_categoriale(df, coloane_selectate):
 	Parametri:
 	----------
 	df : pd.DataFrame
-	    Setul de date original.
+		Setul de date original.
 	coloane_selectate : list of str
-	    Lista cu numele coloanelor ce urmează a fi codificate.
+		Lista cu numele coloanelor ce urmează a fi codificate.
 
 	Returnează:
 	-----------
 	pd.DataFrame
-	    Un DataFrame nou care conține doar coloanele selectate, codificate numeric.
+		Un DataFrame nou care conține doar coloanele selectate, codificate numeric.
 	"""
 	df_encoded = df[coloane_selectate].copy()
 
@@ -52,9 +52,9 @@ def matrice_corelatie(df, coloane_selectate):
 	Parametri:
 	----------
 	df : pd.DataFrame
-	    Setul de date original.
+		Setul de date original.
 	coloane_selectate : list of str
-	    Lista coloanelor categoriale pentru care se va calcula corelația.
+		Lista coloanelor categoriale pentru care se va calcula corelația.
 
 	Ce face funcția:
 	----------------

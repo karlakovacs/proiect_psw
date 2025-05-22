@@ -3,9 +3,9 @@ Vizualizare date în aplicația Streamlit.
 
 - Afișează un număr selectabil de rânduri din datele încărcate.
 - Aplică stilizare condiționată pe baza valorilor din coloana "Target":
-    - Graduate → verde
-    - Enrolled → albastru
-    - Dropout → roșu
+	- Graduate → verde
+	- Enrolled → albastru
+	- Dropout → roșu
 - Culorile sunt ajustate în funcție de tema activă (light/dark) detectată automat.
 - Utilizează librăria `streamlit_theme` pentru a identifica tema curentă.
 """

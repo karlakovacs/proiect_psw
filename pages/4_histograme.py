@@ -4,10 +4,10 @@ Analiză vizuală și interpretativă a distribuției unei variabile numerice.
 - Permite selecția unei coloane numerice din setul de date încărcat.
 - Afișează o histogramă interactivă folosind Plotly.
 - Generează interpretări statistice automate:
-    - Formă a distribuției (simetrică, skewed)
-    - Media, mediana, deviația standard, interval
-    - Identificarea potențialilor outlieri
-    - Detectarea caracterului uniform sau multimodal al distribuției
+	- Formă a distribuției (simetrică, skewed)
+	- Media, mediana, deviația standard, interval
+	- Identificarea potențialilor outlieri
+	- Detectarea caracterului uniform sau multimodal al distribuției
 - Numărul de binuri este configurabil din interfața Streamlit.
 """
 
@@ -33,11 +33,11 @@ def histograma_si_interpretare(df: pd.DataFrame, coloana: str, num_bins: int):
 	Parametri:
 	----------
 	df : pd.DataFrame
-	    Setul de date care conține coloana de analizat.
+		Setul de date care conține coloana de analizat.
 	coloana : str
-	    Numele coloanei numerice pentru care se va crea histograma.
+		Numele coloanei numerice pentru care se va crea histograma.
 	num_bins : int
-	    Numărul de binuri (intervale) folosite pentru histograma.
+		Numărul de binuri (intervale) folosite pentru histograma.
 
 	Ce face funcția:
 	----------------

@@ -21,21 +21,21 @@ df: pd.DataFrame = st.session_state.get("df", default=None)
 
 def stacked_bar_chart(df: pd.DataFrame, coloana: str):
 	"""
-    Creează un stacked bar chart pentru variabila selectată și distribuția claselor din coloana 'Target'.
+	Creează un stacked bar chart pentru variabila selectată și distribuția claselor din coloana 'Target'.
 
-    Parametri:
-    ----------
-    df : pd.DataFrame
-        Setul de date ce conține coloana analizată și coloana țintă 'Target'.
-    coloana : str
-        Numele coloanei categoriale pentru care se analizează distribuția claselor.
+	Parametri:
+	----------
+	df : pd.DataFrame
+		Setul de date ce conține coloana analizată și coloana țintă 'Target'.
+	coloana : str
+		Numele coloanei categoriale pentru care se analizează distribuția claselor.
 
-    Ce face funcția:
-    ----------------
-    - Selectează cele mai frecvente 5 valori din coloana dată.
-    - Calculează distribuția clasei 'Target' pentru fiecare dintre aceste valori.
-    - Afișează o diagramă bară stivuită (stacked bar chart) interactivă cu Plotly.
-    """
+	Ce face funcția:
+	----------------
+	- Selectează cele mai frecvente 5 valori din coloana dată.
+	- Calculează distribuția clasei 'Target' pentru fiecare dintre aceste valori.
+	- Afișează o diagramă bară stivuită (stacked bar chart) interactivă cu Plotly.
+	"""
 
 	top_values = df[coloana].value_counts().head(5).index
 

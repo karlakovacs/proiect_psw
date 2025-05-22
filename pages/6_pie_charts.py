@@ -27,18 +27,18 @@ def plot_pie_si_interpretare(df: pd.DataFrame, coloana: str):
 	Parametri:
 	----------
 	df : pd.DataFrame
-	    Setul de date care conține coloana analizată.
+		Setul de date care conține coloana analizată.
 	coloana : str
-	    Numele coloanei categoriale pentru care se va construi diagrama.
+		Numele coloanei categoriale pentru care se va construi diagrama.
 
 	Ce face funcția:
 	----------------
 	- Afișează un pie chart interactiv cu Plotly, evidențiind proporțiile fiecărei categorii.
 	- Identifică și afișează:
-	    - Cea mai frecventă categorie și procentajul său
-	    - Numărul total de categorii
-	    - Dacă distribuția este echilibrată sau dominată
-	    - Categoriile rare (sub 5% din total)
+		- Cea mai frecventă categorie și procentajul său
+		- Numărul total de categorii
+		- Dacă distribuția este echilibrată sau dominată
+		- Categoriile rare (sub 5% din total)
 	- Prezintă interpretarea textuală direct în interfața Streamlit.
 	"""
 	serie = df[coloana].dropna()
