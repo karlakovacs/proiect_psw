@@ -34,10 +34,10 @@ def boxplot_si_intepretare(df: pd.DataFrame, coloana: str):
 	----------------
 	- Creează un boxplot interactiv folosind Plotly, care afișează și media.
 	- Calculează și afișează statisticile esențiale:
-		• Mediana, media, quartilele Q1 și Q3
-		• IQR (Interquartile Range)
-		• Numărul de outlieri (valori în afara intervalului [Q1 - 1.5*IQR, Q3 + 1.5*IQR])
-		• Forma distribuției estimată din skewness (simetrică, skewed stânga/dreapta)
+		- Mediana, media, quartilele Q1 și Q3
+		- IQR (Interquartile Range)
+		- Numărul de outlieri (valori în afara intervalului [Q1 - 1.5*IQR, Q3 + 1.5*IQR])
+		- Forma distribuției estimată din skewness (simetrică, skewed stânga/dreapta)
 	- Afișează toate informațiile în interfața Streamlit cu marcaje vizuale colorate.
 	"""
 	serie = df[coloana].dropna()

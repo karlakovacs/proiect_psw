@@ -122,7 +122,6 @@ if df is not None:
 		st.success("Nu există valori lipsă.")
 	else:
 		st.warning(f"Există {total_missing} valori lipsă în total.")
-		# st.dataframe(missing[missing > 0])
 		plot_valori_lipsa(st.session_state.df)
 
 	st.subheader("📦 Cod folosit pentru a verifica duplicatele")

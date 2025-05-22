@@ -23,7 +23,6 @@ if df is not None:
 	if "Country of origin" in df.columns:
 		country_counts = df["Country of origin"].value_counts().reset_index()
 		country_counts.columns = ["Țară", "Număr de studenți"]
-		# st.dataframe(country_counts, use_container_width=False)
 		country_counts["Număr de studenți_log"] = np.log1p(country_counts["Număr de studenți"])
 
 		fig = px.choropleth(
