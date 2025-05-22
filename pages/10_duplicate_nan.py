@@ -1,3 +1,11 @@
+"""
+Gestionează valori lipsă și duplicate într-un set de date încărcat.
+
+Permite introducerea artificială a valorilor NaN și afișează un grafic cu cele mai afectate coloane.
+
+Verifică și raportează rândurile duplicate, oferind opțiunea de afișare.
+"""
+
 import random
 
 import numpy as np
@@ -8,12 +16,30 @@ import streamlit as st
 from nav_bar import nav_bar
 
 
+st.set_page_config(page_title="Duplicate și valori lipsă", page_icon="🚨", layout="wide")
 nav_bar()
 st.title("Duplicate și valori lipsă")
 df: pd.DataFrame = st.session_state.get("df", default=None)
 
 
 def introducere_valori_lipsa(df: pd.DataFrame, procent_min=0.01, procent_max=0.1):
+	"""
+	Introduce artificial valori lipsă (NaN) într-un DataFrame într-un interval procentual specificat.
+
+	Parametri:
+	----------
+	df : pd.DataFrame
+	    DataFrame-ul original.
+	procent_min : float, implicit 0.01
+	    Procentul minim de valori lipsă ce vor fi introduse per coloană.
+	procent_max : float, implicit 0.1
+	    Procentul maxim de valori lipsă ce pot fi introduse per coloană.
+
+	Returnează:
+	-----------
+	pd.DataFrame
+	    O copie a DataFrame-ului original cu valori lipsă introduse aleatoriu (exceptând coloana 'Target').
+	"""
 	df_copy = df.copy()
 	for col in df_copy.columns:
 		if col != "Target":
@@ -25,6 +51,20 @@ def introducere_valori_lipsa(df: pd.DataFrame, procent_min=0.01, procent_max=0.1
 
 
 def plot_valori_lipsa(df: pd.DataFrame):
+	"""
+	Afișează un grafic cu cele mai afectate coloane de valori lipsă într-un DataFrame.
+
+	Parametri:
+	----------
+	df : pd.DataFrame
+	    DataFrame-ul analizat pentru identificarea valorilor lipsă.
+
+	Ce face funcția:
+	----------------
+	- Calculează numărul și procentul valorilor lipsă pentru fiecare coloană.
+	- Afișează un bar chart interactiv cu primele 5 coloane cu cele mai multe valori lipsă.
+	- Ignoră coloanele fără valori lipsă și nu afișează nimic dacă nu există lipsuri.
+	"""
 	missing_vals = df.isnull().sum()
 	missing_percent = (missing_vals / len(df)) * 100
 

@@ -1,3 +1,15 @@
+"""
+Vizualizare date în aplicația Streamlit.
+
+- Afișează un număr selectabil de rânduri din datele încărcate.
+- Aplică stilizare condiționată pe baza valorilor din coloana "Target":
+    - Graduate → verde
+    - Enrolled → albastru
+    - Dropout → roșu
+- Culorile sunt ajustate în funcție de tema activă (light/dark) detectată automat.
+- Utilizează librăria `streamlit_theme` pentru a identifica tema curentă.
+"""
+
 import pandas as pd
 import streamlit as st
 from streamlit_theme import st_theme
@@ -5,6 +17,7 @@ from streamlit_theme import st_theme
 from nav_bar import nav_bar
 
 
+st.set_page_config(page_title="Vizualizare date", page_icon="🔍", layout="wide")
 nav_bar()
 
 st.title("Vizualizare date")

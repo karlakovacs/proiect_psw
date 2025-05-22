@@ -1,3 +1,11 @@
+"""
+Generează o hartă choropleth care arată distribuția studenților după țara de origine.
+
+Folosește o transformare logaritmică pentru a echilibra reprezentarea vizuală a frecvențelor.
+
+Afișează detalii interactive și oferă contextul interpretării în interfața Streamlit.
+"""
+
 import numpy as np
 import pandas as pd
 import plotly.express as px
@@ -6,6 +14,7 @@ import streamlit as st
 from nav_bar import nav_bar
 
 
+st.set_page_config(page_title="Hartă", page_icon="🗺️", layout="wide")
 nav_bar()
 st.title("Hartă")
 df: pd.DataFrame = st.session_state.get("df", default=None)

@@ -1,3 +1,11 @@
+"""
+Vizualizare interactivă a unui boxplot pentru o variabilă numerică.
+
+Utilizatorul selectează o coloană, iar aplicația afișează distribuția și detectează outlieri.
+
+Include interpretare bazată pe skewness, medie, mediană și IQR.
+"""
+
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
@@ -5,12 +13,33 @@ import streamlit as st
 from nav_bar import nav_bar
 
 
+st.set_page_config(page_title="Box plots", page_icon="📦", layout="wide")
 nav_bar()
 
 st.title("Box plots pentru variabilele numerice")
 df: pd.DataFrame = st.session_state.get("df", default=None)
 
-def boxplot_si_intepretare(df, coloana):
+def boxplot_si_intepretare(df: pd.DataFrame, coloana: str):
+	"""
+	Generează un boxplot interactiv și oferă interpretări statistice pentru o variabilă numerică.
+
+	Parametri:
+	----------
+	df : pd.DataFrame
+	    DataFrame-ul ce conține coloana analizată.
+	coloana : str
+	    Numele coloanei numerice pentru care se generează boxplot-ul și interpretarea.
+
+	Ce face funcția:
+	----------------
+	- Creează un boxplot interactiv folosind Plotly, care afișează și media.
+	- Calculează și afișează statisticile esențiale:
+	    • Mediana, media, quartilele Q1 și Q3
+	    • IQR (Interquartile Range)
+	    • Numărul de outlieri (valori în afara intervalului [Q1 - 1.5*IQR, Q3 + 1.5*IQR])
+	    • Forma distribuției estimată din skewness (simetrică, skewed stânga/dreapta)
+	- Afișează toate informațiile în interfața Streamlit cu marcaje vizuale colorate.
+	"""
 	serie = df[coloana].dropna()
 	mediana = serie.median()
 	media = serie.mean()

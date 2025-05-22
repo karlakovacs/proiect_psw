@@ -1,3 +1,11 @@
+"""
+Afișează un pie chart pentru o variabilă categorială selectată din setul de date.
+
+Permite interpretarea distribuției: categorie dominantă, echilibru, valori rare.
+
+Util pentru înțelegerea variabilelor categoriale într-un mod vizual.
+"""
+
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -5,6 +13,7 @@ import streamlit as st
 from nav_bar import nav_bar
 
 
+st.set_page_config(page_title="Pie charts", page_icon="🥧", layout="wide")
 nav_bar()
 
 st.title("Pie charts pentru variabilele categoriale")
@@ -12,6 +21,26 @@ df: pd.DataFrame = st.session_state.get("df", default=None)
 
 
 def plot_pie_si_interpretare(df: pd.DataFrame, coloana: str):
+	"""
+	Generează o diagramă circulară (pie chart) și interpretează distribuția unei variabile categoriale.
+
+	Parametri:
+	----------
+	df : pd.DataFrame
+	    Setul de date care conține coloana analizată.
+	coloana : str
+	    Numele coloanei categoriale pentru care se va construi diagrama.
+
+	Ce face funcția:
+	----------------
+	- Afișează un pie chart interactiv cu Plotly, evidențiind proporțiile fiecărei categorii.
+	- Identifică și afișează:
+	    - Cea mai frecventă categorie și procentajul său
+	    - Numărul total de categorii
+	    - Dacă distribuția este echilibrată sau dominată
+	    - Categoriile rare (sub 5% din total)
+	- Prezintă interpretarea textuală direct în interfața Streamlit.
+	"""
 	serie = df[coloana].dropna()
 
 	fig = px.pie(

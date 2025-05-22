@@ -1,184 +1,145 @@
+"""
+Pagină Streamlit pentru antrenarea și evaluarea modelelor de clasificare pe un set de date preprocesat.
+
+Permite selectarea mai multor algoritmi de machine learning (ex. CatBoost, LightGBM, XGBoost, etc.),
+antrenarea acestora pe datele din `st.session_state["seturi_date"]` și afișarea rezultatelor.
+
+Rezultatele includ scoruri de acuratețe, scor F1 și matrici de confuzie, precum și configurarea folosită pentru reproducerea rezultatelor.
+"""
+
 from catboost import CatBoostClassifier
 from lightgbm import LGBMClassifier
-import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, RobustScaler, StandardScaler
+from sklearn.tree import DecisionTreeClassifier
 import streamlit as st
 from xgboost import XGBClassifier
 
 from nav_bar import nav_bar
 
 
+st.set_page_config(page_title="Modele ML", page_icon="🤖", layout="wide")
 nav_bar()
 st.title("Modele ML")
 
-df: pd.DataFrame = st.session_state.get("df", default=None)
-config: dict = st.session_state.get("config", default=None)
+df: pd.DataFrame = st.session_state.get("df", None)
+config: dict = st.session_state.get("config", None)
+seturi_date: dict = st.session_state.get("seturi_date", None)
 
-
-def tratare_outlieri(df: pd.DataFrame, strategie: str) -> pd.DataFrame:
-	df = df.copy()
-
-	for col in df.select_dtypes(include=['float64', 'int64']).columns:
-		if col == "Target":
-			continue
-
-		q1 = df[col].quantile(0.25)
-		q3 = df[col].quantile(0.75)
-		iqr = q3 - q1
-		lower = q1 - 1.5 * iqr
-		upper = q3 + 1.5 * iqr
-
-		if strategie == "Eliminare rânduri cu outlieri":
-			df = df[(df[col] >= lower) & (df[col] <= upper)]
-
-		elif strategie == "Înlocuire cu NaN":
-			df[col] = df[col].mask((df[col] < lower) | (df[col] > upper))
-
-		elif strategie == "Transformare logaritmică":
-			df[col] = np.log1p(df[col])
-
-		elif strategie == "Capping (1%-99%)":
-			lower_cap = df[col].quantile(0.01)
-			upper_cap = df[col].quantile(0.99)
-			df[col] = np.where(df[col] < lower_cap, lower_cap,
-							   np.where(df[col] > upper_cap, upper_cap, df[col]))
-
-		elif strategie == "Păstrare":
-			pass
-
-	return df
-
-
-def tratare_valori_lipsa(df: pd.DataFrame, strategie: str) -> pd.DataFrame:
-	df = df.copy()
-
-	for col in df.select_dtypes(include=np.number).columns:
-		if col != "Target" and df[col].isnull().any():
-			if strategie == "Medie":
-				df[col] = df[col].fillna(df[col].mean())
-			elif strategie == "Mediană":
-				df[col] = df[col].fillna(df[col].median())
-			elif strategie == "Mod":
-				df[col] = df[col].fillna(df[col].mode()[0])
-
-	for col in df.select_dtypes(include=["object", "category", "bool"]).columns:
-		if col != "Target" and df[col].isnull().any():
-			df[col] = df[col].fillna(df[col].mode()[0])
-
-	return df
-
-
-def pregatire_date(df: pd.DataFrame, strategie_scalare: str, dimensiune_test: float, stratificat: bool):
-	X = df.drop("Target", axis=1)
-	y = df["Target"]
-
-	clase = {
-		"Dropout": 0,
-		"Enrolled": 1,
-		"Graduate": 2
-	}
-
-	y = y.map(clase)
-
-	scaler = None
-
-	if strategie_scalare == "StandardScaler":
-		scaler = StandardScaler()
-
-	elif strategie_scalare == "MinMaxScaler":
-		scaler = MinMaxScaler()
-
-	elif strategie_scalare == "RobustScaler":
-		scaler = RobustScaler()
-
-	if scaler is not None:
-		coloane_numerice = X.select_dtypes(include=['float64', 'int64']).columns
-		X_scaled = scaler.fit_transform(X[coloane_numerice])
-		X_scaled_df = pd.DataFrame(X_scaled, columns=coloane_numerice, index=X.index)
-		X[coloane_numerice] = X_scaled_df
-
-	X_train, X_test, y_train, y_test = train_test_split(
-		X, y, test_size=dimensiune_test, stratify=y if stratificat else None, random_state=42)
-	return X_train, X_test, y_train, y_test
+MODELE_DISPONIBILE = {
+	"CatBoost": CatBoostClassifier(verbose=0),
+	"LightGBM": LGBMClassifier(),
+	"XGBoost": XGBClassifier(enable_categorical=True, tree_method="hist"),
+	"Random Forest": RandomForestClassifier(n_estimators=100, random_state=42),
+	"Logistic Regression": LogisticRegression(max_iter=1000, solver="lbfgs"),
+	"Decision Tree": DecisionTreeClassifier(random_state=42),
+}
 
 
 def antrenare_model(denumire_model: str, model, X_train, X_test, y_train, y_test):
-	if denumire_model == "CatBoost":
-		cat_features = X_train.select_dtypes(include=["object", "category", "bool"]).columns.tolist()
-		model.fit(X_train, y_train, cat_features=cat_features)
-	elif denumire_model == "XGBoost":
-		model.fit(X_train, y_train)
-	else:
-		model.fit(X_train, y_train)
-	y_pred = model.predict(X_test)
-	acc = accuracy_score(y_test, y_pred)
-	f1 = f1_score(y_test, y_pred, average="weighted")
-	cm = confusion_matrix(y_test, y_pred)
-	st.session_state.rezultate.append((denumire_model, acc, f1, cm))
+	"""
+	Antrenează un model de clasificare pe datele furnizate și salvează rezultatele în session state.
+
+	Parametri:
+	----------
+	denumire_model : str
+	    Numele modelului (util pentru afișare și tratamente speciale, ex. CatBoost).
+	model : object
+	    Instanța modelului ML (ex. CatBoostClassifier, XGBClassifier, etc.).
+	X_train, X_test : pd.DataFrame
+	    Seturile de antrenare și testare pentru caracteristici.
+	y_train, y_test : pd.Series
+	    Etichetele corespunzătoare seturilor de antrenare și testare.
+
+	Ce face funcția:
+	----------------
+	- Antrenează modelul pe datele de antrenare.
+	- Face predicții pe test set.
+	- Calculează acuratețea, scorul F1 (ponderat) și matricea de confuzie.
+	- Adaugă rezultatele într-o listă din `st.session_state.rezultate`.
+	- Afișează un mesaj informativ dacă apare o eroare în timpul antrenării.
+	"""
+	try:
+		if denumire_model == "CatBoost":
+			cat_features = X_train.select_dtypes(include=["object", "category", "bool"]).columns.tolist()
+			model.fit(X_train, y_train, cat_features=cat_features)
+		else:
+			model.fit(X_train, y_train)
+
+		y_pred = model.predict(X_test)
+		acc = accuracy_score(y_test, y_pred)
+		f1 = f1_score(y_test, y_pred, average="weighted")
+		cm = confusion_matrix(y_test, y_pred)
+
+		st.session_state.rezultate.append((denumire_model, acc, f1, cm))
+	except Exception as e:
+		st.info(f"Modelul **{denumire_model}** nu a putut fi antrenat. Eroare: {e}")
 
 
-if df is not None and config is not None:
+if df is not None and config is not None and seturi_date is not None:
+	st.header("Alege modelele de ML")
 
-	st.subheader("Leaderboard")
+	modele_selectate = st.multiselect(
+		"Selectează modelele pe care dorești să le antrenezi:",
+		list(MODELE_DISPONIBILE.keys()),
+		default=["CatBoost", "LightGBM", "XGBoost"],
+	)
 
-	if not "training_done" in st.session_state:
-		df = tratare_outlieri(df, config["tratare_outlieri"])
-		df = tratare_valori_lipsa(df, config["tratare_valori_lipsa"])
-		X_train, X_test, y_train, y_test = pregatire_date(
-			df, config["metoda_scalare"], config["dimensiune_test"], config["stratificat"])
-		for col in X_train.select_dtypes(include="object").columns:
-			X_train[col] = X_train[col].astype("category")
-			X_test[col] = X_test[col].astype("category")
+	if st.button("🚀 Antrenează modelele"):
 		st.session_state.rezultate = []
 
-		modele: dict = {
-			"CatBoost": CatBoostClassifier(verbose=0),
-			"LightGBM": LGBMClassifier(),
-			"XGBoost": XGBClassifier(enable_categorical=True, tree_method="hist")
-		}
+		X_train = seturi_date["X_train"]
+		X_test = seturi_date["X_test"]
+		y_train = seturi_date["y_train"]
+		y_test = seturi_date["y_test"]
 
-		for (denumire_model, model) in modele.items():
-			if denumire_model in config["algoritmi"]:
-				antrenare_model(denumire_model, model, X_train, X_test, y_train, y_test)
+		X_train.columns = X_train.columns.str.replace("[^A-Za-z0-9_]+", "_", regex=True)
+		X_test.columns = X_test.columns.str.replace("[^A-Za-z0-9_]+", "_", regex=True)
 
-		st.session_state.training_done = True
+		CLASE_ORDONATE = ["Dropout", "Enrolled", "Graduate"]
+		label_map = {label: idx for idx, label in enumerate(CLASE_ORDONATE)}
+		inverse_label_map = {idx: label for label, idx in label_map.items()}
+		y_train = y_train.map(label_map)
+		y_test = y_test.map(label_map)
 
-	leaderboard_df = pd.DataFrame(st.session_state.rezultate,
-								  columns=["Model", "Acuratețe", "Scor F1", "Matrice de confuzie"])
-	st.dataframe(leaderboard_df.iloc[:, :-1], hide_index=True, use_container_width=False)
+		for model_nume in modele_selectate:
+			model = MODELE_DISPONIBILE.get(model_nume)
+			if model is not None:
+				with st.spinner(f"Antrenare model {model_nume}..."):
+					antrenare_model(model_nume, model, X_train, X_test, y_train, y_test)
 
-	st.header("Rezultate")
+	if "rezultate" in st.session_state and st.session_state.rezultate:
+		st.subheader("📊 Rezultate modele")
 
-	for rezultat in st.session_state.rezultate:
-		denumire_model, acc, f1, cm = rezultat
-
-		st.subheader(denumire_model)
-		clase = ["Dropout", "Enrolled", "Graduate"]
-
-		fig = go.Figure(data=go.Heatmap(
-			z=cm[:, ::-1],
-			x=clase[::-1],
-			y=clase,
-			colorscale="Blues",
-			text=cm[:, ::-1],
-			texttemplate="%{text}",
-			hovertemplate="Predicted %{x}<br>Actual %{y}<br>Count: %{z}<extra></extra>"
-		))
-
-		fig.update_layout(
-			title="Matrice de confuzie",
-			xaxis_title="Valori prezise",
-			yaxis_title="Valori reale",
-			height=500,
-			width=700
+		leaderboard_df = pd.DataFrame(
+			st.session_state.rezultate, columns=["Model", "Acuratețe", "Scor F1", "Matrice de confuzie"]
 		)
+		st.dataframe(leaderboard_df.iloc[:, :-1], hide_index=True, use_container_width=True)
 
-		st.plotly_chart(fig, use_container_width=False)
+		for denumire_model, acc, f1, cm in st.session_state.rezultate:
+			st.subheader(f"{denumire_model} - Matrice de confuzie")
 
+			clase = ["Dropout", "Enrolled", "Graduate"]
+			fig = go.Figure(
+				data=go.Heatmap(
+					z=cm[:, ::-1],
+					x=clase[::-1],
+					y=clase,
+					colorscale="Blues",
+					text=cm[:, ::-1],
+					texttemplate="%{text}",
+					hovertemplate="Predicted %{x}<br>Actual %{y}<br>Count: %{z}<extra></extra>",
+				)
+			)
+
+			fig.update_layout(xaxis_title="Valori prezise", yaxis_title="Valori reale", height=400, width=600)
+			st.plotly_chart(fig, use_container_width=True)
+
+		st.header("Configurație folosită")
+		st.json(config)
 
 else:
-	st.warning("Configurează rularea în tab-ul anterior.")
+	st.warning("Te rugăm să încarci datele și să finalizezi configurarea în tab-ul anterior.")

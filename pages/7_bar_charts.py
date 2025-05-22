@@ -1,3 +1,11 @@
+"""
+Vizualizează distribuția valorilor unei variabile categoriale în funcție de clasele din `Target`.
+
+Folosește un stacked bar chart pentru cele mai frecvente 5 valori din coloana selectată.
+
+Include și explicații pas cu pas pentru procesul de agregare și afișare.
+"""
+
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -5,12 +13,30 @@ import streamlit as st
 from nav_bar import nav_bar
 
 
+st.set_page_config(page_title="Stacked bar charts", page_icon="📚", layout="wide")
 nav_bar()
-st.title("Stacked bar charts - :rainbow-background[agregări] în Pandas")
+st.title("Stacked bar charts - agregări în Pandas")
 df: pd.DataFrame = st.session_state.get("df", default=None)
 
 
 def stacked_bar_chart(df: pd.DataFrame, coloana: str):
+	"""
+    Creează un stacked bar chart pentru variabila selectată și distribuția claselor din coloana 'Target'.
+
+    Parametri:
+    ----------
+    df : pd.DataFrame
+        Setul de date ce conține coloana analizată și coloana țintă 'Target'.
+    coloana : str
+        Numele coloanei categoriale pentru care se analizează distribuția claselor.
+
+    Ce face funcția:
+    ----------------
+    - Selectează cele mai frecvente 5 valori din coloana dată.
+    - Calculează distribuția clasei 'Target' pentru fiecare dintre aceste valori.
+    - Afișează o diagramă bară stivuită (stacked bar chart) interactivă cu Plotly.
+    """
+
 	top_values = df[coloana].value_counts().head(5).index
 
 	df_top = df[df[coloana].isin(top_values)]
@@ -30,7 +56,7 @@ def stacked_bar_chart(df: pd.DataFrame, coloana: str):
 		y="count",
 		color="Target",
 		barmode="stack",
-		title=f"Distribuția claselor din `Target` pentru cele mai frecvente valori din `{coloana}` (sortate)"
+		title=f"Distribuția claselor din `Target` pentru cele mai frecvente valori din `{coloana}`"
 	)
 
 	st.plotly_chart(fig, use_container_width=True)

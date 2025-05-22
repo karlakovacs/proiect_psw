@@ -1,9 +1,18 @@
+"""
+Încărcare fișier CSV în aplicația Streamlit.
+
+- Permite utilizatorului să încarce un fișier `.csv`.
+- Salvează datele în `st.session_state.df` pentru utilizare ulterioară.
+- Afișează confirmare de succes sau avertisment dacă nu s-a încărcat nimic.
+"""
+
 import pandas as pd
 import streamlit as st
 
 from nav_bar import nav_bar
 
 
+st.set_page_config(page_title="Încărcare fișier", page_icon="📂", layout="wide")
 nav_bar()
 
 st.title("Încărcare fișier")
