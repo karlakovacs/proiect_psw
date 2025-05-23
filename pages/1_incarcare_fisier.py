@@ -17,11 +17,26 @@ nav_bar()
 
 st.title("Încărcare fișier")
 
-uploaded_file = st.file_uploader("Încarcă un fișier CSV", type=["csv"])
 
-if uploaded_file is not None:
-	df = pd.read_csv(uploaded_file)
-	st.session_state.df = df
-	st.success("Datele au fost citite cu succes!")
-else:
-	st.warning("Încarcă un fișier CSV.")
+def incarcare_fisier():
+	"""
+	Încarcă un fișier CSV în aplicația Streamlit și îl salvează în session_state.
+
+	Ce face funcția:
+	----------------
+	- Deschide un selector de fișiere pentru utilizator, acceptând doar fișiere `.csv`.
+	- Dacă fișierul este selectat, acesta este citit cu Pandas și salvat în `st.session_state.df`.
+	- Afișează un mesaj de succes dacă fișierul a fost încărcat cu succes.
+	- În caz contrar, avertizează utilizatorul să încarce un fișier.
+	"""
+	uploaded_file = st.file_uploader("Încarcă un fișier CSV", type=["csv"])
+
+	if uploaded_file is not None:
+		df = pd.read_csv(uploaded_file)
+		st.session_state.df = df
+		st.success("Datele au fost citite cu succes!")
+	else:
+		st.warning("Încarcă un fișier CSV.")
+
+
+incarcare_fisier()

@@ -24,6 +24,22 @@ st.title("Vizualizare date")
 df: pd.DataFrame = st.session_state.get("df", default=None)
 
 def colorare_randuri(rand):
+	"""
+	Aplică stilizare condiționată pentru un rând dintr-un DataFrame, în funcție de valoarea din coloana 'Target'.
+
+	Parametri:
+	----------
+	rand : pd.Series
+	    Rândul din DataFrame care va fi stilizat.
+
+	Returnează:
+	-----------
+	list of str
+	    O listă de stiluri CSS aplicabile fiecărei celule din rând, colorate în funcție de valoarea 'Target' și de tema activă (light/dark):
+	    - Graduate → verde
+	    - Enrolled → albastru
+	    - Dropout → roșu
+	"""
 	if theme == "light":
 		culori = {
 			"Graduate": "#ccffcc",

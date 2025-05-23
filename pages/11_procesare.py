@@ -291,7 +291,8 @@ if df is not None:
 
 		for col in selected_cols:
 			st.markdown(f"Sortează valorile din coloana **{col}** în ordinea dorită:")
-			unique_values = df[col].unique().tolist()
+			# unique_values = df[col].unique().tolist()
+			unique_values = [str(v) for v in df[col].unique().tolist()]
 			sorted_values = sort_items(unique_values, direction="horizontal", key=f"sort_{col}")
 			st.markdown(f"Ordine aleasă: `{sorted_values}`")
 			st.session_state["label_sort_orders"][col] = sorted_values
